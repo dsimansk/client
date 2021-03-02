@@ -64,7 +64,7 @@ func TestSourceListTypes(t *testing.T) {
 		newSourceCRDObjWithSpec("apiserversources", "sources.knative.dev", "v1alpha1", "ApiServerSource"),
 	)
 	assert.NilError(t, err)
-	assert.Check(t, util.ContainsAll(output[0], "TYPE", "NAME", "DESCRIPTION", "BUILT-IN SOURCE"))
+	assert.Check(t, util.ContainsAll(output[0], "TYPE", "NAME", "BUILT-IN", "DESCRIPTION"))
 	assert.Check(t, util.ContainsAll(output[1], "ApiServerSource", "apiserversources", "YES"))
 	assert.Check(t, util.ContainsAll(output[2], "PingSource", "pingsources", "YES"))
 }
@@ -74,7 +74,7 @@ func TestSourceListTypesNoHeaders(t *testing.T) {
 		newSourceCRDObjWithSpec("pingsources", "sources.knative.dev", "v1alpha1", "PingSource"),
 	)
 	assert.NilError(t, err)
-	assert.Check(t, util.ContainsNone(output[0], "TYPE", "NAME", "DESCRIPTION", "BUILT-IN SOURCE"))
+	assert.Check(t, util.ContainsNone(output[0], "TYPE", "NAME", "BUILT-IN", "DESCRIPTION"))
 	assert.Check(t, util.ContainsAll(output[0], "PingSource"))
 }
 

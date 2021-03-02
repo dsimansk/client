@@ -50,8 +50,8 @@ func ListTypesHandlers(h printers.PrintHandler) {
 	sourceTypesColumnDefinitions := []metav1beta1.TableColumnDefinition{
 		{Name: "Type", Type: "string", Description: "Kind / Type of the source type", Priority: 1},
 		{Name: "Name", Type: "string", Description: "Name of the source type", Priority: 1},
+		{Name: "Built-In", Type: "string", Description: "Built-in source", Priority: 1},
 		{Name: "Description", Type: "string", Description: "Description of the source type", Priority: 1},
-		{Name: "Built-In Source", Type: "string", Description: "Built-in source", Priority: 1},
 	}
 	h.TableHandler(sourceTypesColumnDefinitions, printSourceTypes)
 	h.TableHandler(sourceTypesColumnDefinitions, printSourceTypesList)
@@ -87,7 +87,7 @@ func printSourceTypes(sourceType unstructured.Unstructured, options printers.Pri
 	row := metav1beta1.TableRow{
 		Object: runtime.RawExtension{Object: &sourceType},
 	}
-	row.Cells = append(row.Cells, kind, name, sourceTypeDescription[kind], sourceTypeBuiltin[kind])
+	row.Cells = append(row.Cells, kind, name, sourceTypeBuiltin[kind], sourceTypeDescription[kind])
 	return []metav1beta1.TableRow{row}, nil
 }
 
