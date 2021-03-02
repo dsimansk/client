@@ -37,12 +37,21 @@ var sourceTypeDescription = map[string]string{
 	"KafkaSource": "Route events from Apache Kafka Server to addressable",
 }
 
+var sourceTypeBuiltin = map[string]string{
+	"ApiServerSource": "YES",
+	"SinkBinding":     "YES",
+	"PingSource":      "YES",
+	"ContainerSource": "YES",
+	"KafkaSource":     "NO",
+}
+
 // ListTypesHandlers handles printing human readable table for `kn source list-types`
 func ListTypesHandlers(h printers.PrintHandler) {
 	sourceTypesColumnDefinitions := []metav1beta1.TableColumnDefinition{
 		{Name: "Type", Type: "string", Description: "Kind / Type of the source type", Priority: 1},
 		{Name: "Name", Type: "string", Description: "Name of the source type", Priority: 1},
 		{Name: "Description", Type: "string", Description: "Description of the source type", Priority: 1},
+		{Name: "Built-In Source", Type: "string", Description: "Built-in source", Priority: 1},
 	}
 	h.TableHandler(sourceTypesColumnDefinitions, printSourceTypes)
 	h.TableHandler(sourceTypesColumnDefinitions, printSourceTypesList)
@@ -78,7 +87,7 @@ func printSourceTypes(sourceType unstructured.Unstructured, options printers.Pri
 	row := metav1beta1.TableRow{
 		Object: runtime.RawExtension{Object: &sourceType},
 	}
-	row.Cells = append(row.Cells, kind, name, sourceTypeDescription[kind])
+	row.Cells = append(row.Cells, kind, name, sourceTypeDescription[kind], sourceTypeBuiltin[kind])
 	return []metav1beta1.TableRow{row}, nil
 }
 
