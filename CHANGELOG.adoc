@@ -24,7 +24,7 @@
 | https://github.com/knative/client/issues/1248[#1248]
 | 🎁
 | Add `BUILT-IN` column to `kn source list-types`
-| https://github.com/knative/client/pull/[#1246]
+| https://github.com/knative/client/pull/1246[#1246]
 
 |===
 
