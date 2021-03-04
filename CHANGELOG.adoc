@@ -13,7 +13,6 @@
 ////
 
 ## (Unreleased)
-## v0.22.0 (unreleased)
 
 [cols="1,10,3", options="header", width="100%"]
 |===
@@ -22,6 +21,7 @@
 | ✨
 | Update CRDs API version to `v1`
 | https://github.com/knative/client/issues/1248[#1248]
+
 | 🎁
 | Add `BUILT-IN` column to `kn source list-types`
 | https://github.com/knative/client/pull/1246[#1246]
