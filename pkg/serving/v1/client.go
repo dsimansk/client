@@ -202,6 +202,11 @@ func (cl *knServingClient) WatchService(name string, timeout time.Duration) (wat
 		cl.client.RESTClient(), cl.namespace, "services", name, timeout)
 }
 
+func (cl *knServingClient) WatchServiceWithVersion(name, initialVersion string, timeout time.Duration) (watch.Interface, error) {
+	return wait.NewWatcherWithVersion(cl.client.Services(cl.namespace).Watch,
+		cl.client.RESTClient(), initialVersion, cl.namespace, "services", name, timeout)
+}
+
 func (cl *knServingClient) WatchRevision(name string, timeout time.Duration) (watch.Interface, error) {
 	return wait.NewWatcher(cl.client.Revisions(cl.namespace).Watch,
 		cl.client.RESTClient(), cl.namespace, "revision", name, timeout)
@@ -320,20 +325,30 @@ func (cl *knServingClient) DeleteService(serviceName string, timeout time.Durati
 		return cl.deleteService(serviceName, v1.DeletePropagationBackground)
 	}
 	waitC := make(chan error)
-	watcher, err := cl.WatchService(serviceName, timeout)
+	svc, err := cl.GetService(serviceName)
 	if err != nil {
 		return nil
 	}
-	defer watcher.Stop()
+	fmt.Println("Main: Before magic...")
 	go func() {
+		fmt.Println("Goroutine: Sleeping...")
+		time.Sleep(time.Second * 20)
+		fmt.Println("Goroutine:  Waky waky starting to watch...")
+		watcher, err := cl.WatchServiceWithVersion(serviceName, svc.ResourceVersion, timeout)
+		if err != nil {
+			waitC <- err
+		}
+		defer watcher.Stop()
 		waitForEvent := wait.NewWaitForEvent("service", func(evt *watch.Event) bool { return evt.Type == watch.Deleted })
-		err, _ := waitForEvent.Wait(watcher, serviceName, wait.Options{Timeout: &timeout}, wait.NoopMessageCallback())
+		err, _ = waitForEvent.Wait(watcher, serviceName, wait.Options{Timeout: &timeout}, wait.NoopMessageCallback())
 		waitC <- err
 	}()
+	fmt.Println("Main: Calling deleteService...")
 	err = cl.deleteService(serviceName, v1.DeletePropagationForeground)
 	if err != nil {
 		return err
 	}
+	fmt.Println("Main: Waiting for result channel...")
 	return <-waitC
 }
 

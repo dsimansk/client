@@ -81,6 +81,18 @@ func NewWatcher(watchFunc watchF, c rest.Interface, ns string, resource string, 
 	return polling, nil
 }
 
+func NewWatcherWithVersion(watchFunc watchF, c rest.Interface, initialResourceVersion string, ns string, resource string, name string, timeout time.Duration) (watch.Interface, error) {
+	native, err := nativeWatchWithVersion(watchFunc, name, initialResourceVersion, timeout)
+	if err == nil {
+		return native, nil
+	}
+	polling := &pollingWatcher{
+		c, ns, resource, name, timeout, make(chan bool), make(chan watch.Event), &sync.WaitGroup{},
+		newTickerPollInterval(time.Second), nativePoll(c, ns, resource, name)}
+	polling.start()
+	return polling, nil
+}
+
 func (w *pollingWatcher) start() {
 	w.wg.Add(1)
 
@@ -157,6 +169,16 @@ func (w *pollingWatcher) Stop() {
 	w.wg.Wait()
 	close(w.result)
 	close(w.done)
+}
+
+func nativeWatchWithVersion(watchFunc watchF, name string, initialVersion string, timeout time.Duration) (watch.Interface, error) {
+	opts := v1.ListOptions{
+		ResourceVersion: initialVersion,
+		FieldSelector:   fields.OneTermEqualSelector("metadata.name", name).String(),
+	}
+	opts.Watch = true
+	addWatchTimeout(&opts, timeout)
+	return watchFunc(context.TODO(), opts)
 }
 
 func nativeWatch(watchFunc watchF, name string, timeout time.Duration) (watch.Interface, error) {

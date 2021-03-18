@@ -245,7 +245,11 @@ func (w *waitForEvent) Wait(watcher watch.Interface, name string, options Option
 			return fmt.Errorf("timeout: %s '%s' not ready after %d seconds", w.kind, name, int(timeout/time.Second)), time.Since(start)
 		case err := <-errChan:
 			return err, time.Since(start)
-		case event := <-watcher.ResultChan():
+		case event, ok := <-watcher.ResultChan():
+			if !ok {
+				fmt.Println("ResultChan closed")
+			}
+			fmt.Println("Event: " + event.Type)
 			if w.eventDone(&event) {
 				return nil, time.Since(start)
 			}
