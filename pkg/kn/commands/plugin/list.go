@@ -23,7 +23,8 @@ import (
 
 	"knative.dev/client/pkg/kn/commands"
 	"knative.dev/client/pkg/kn/config"
-	"knative.dev/client/pkg/kn/plugin"
+
+	"knative.dev/client/public/plugin"
 )
 
 // ValidPluginFilenamePrefixes controls the prefix for all kn plugins

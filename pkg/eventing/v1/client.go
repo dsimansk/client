@@ -27,9 +27,9 @@ import (
 	clientv1 "knative.dev/eventing/pkg/client/clientset/versioned/typed/eventing/v1"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
 
-	kn_errors "knative.dev/client/pkg/errors"
 	"knative.dev/client/pkg/util"
 	"knative.dev/client/pkg/wait"
+	kn_errors "knative.dev/client/public/errors"
 )
 
 // KnEventingClient to Eventing Sources. All methods are relative to the

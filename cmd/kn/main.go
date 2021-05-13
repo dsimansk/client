@@ -25,8 +25,9 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"knative.dev/client/public/plugin"
+
 	"knative.dev/client/pkg/kn/config"
-	"knative.dev/client/pkg/kn/plugin"
 	"knative.dev/client/pkg/kn/root"
 )
 
