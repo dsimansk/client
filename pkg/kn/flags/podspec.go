@@ -38,6 +38,8 @@ type PodSpecFlags struct {
 	Command []string
 	Arg     []string
 
+	Containers string
+
 	Resources          ResourceOptions
 	Port               string
 	ServiceAccountName string
@@ -122,6 +124,11 @@ func (p *PodSpecFlags) AddFlags(flagset *pflag.FlagSet) []string {
 			"Example: --arg myArg1 --arg --myArg2 --arg myArg3=3. "+
 			"You can use this flag multiple times.")
 	flagNames = append(flagNames, "arg")
+
+	flagset.StringVarP(&p.Containers, "containers", "", "",
+		"Specify path to file containing definition for additional containers, alternatively use '-' to read from stdin. "+
+			"Example: --containers ./containers.yaml or --containers -.")
+	flagNames = append(flagNames, "containers")
 
 	flagset.StringSliceVar(&p.Resources.Limits,
 		"limit",
@@ -263,6 +270,13 @@ func (p *PodSpecFlags) ResolvePodSpec(podSpec *corev1.PodSpec, flags *pflag.Flag
 
 	if flags.Changed("user") {
 		err = UpdateUser(podSpec, p.User)
+		if err != nil {
+			return err
+		}
+	}
+
+	if flags.Changed("containers") || p.Containers == "-" {
+		err = UpdateContainers(podSpec, p.Containers)
 		if err != nil {
 			return err
 		}

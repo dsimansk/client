@@ -16,8 +16,11 @@ package flags
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
+
+	"k8s.io/apimachinery/pkg/util/yaml"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -253,6 +256,26 @@ func UpdateImagePullSecrets(spec *corev1.PodSpec, pullsecrets string) {
 			Name: pullsecrets,
 		}}
 	}
+}
+
+func UpdateContainers(spec *corev1.PodSpec, containers string) error {
+	var f *os.File
+	var err error
+	if containers == "-" {
+		f = os.Stdin
+	} else {
+		f, err = os.Open(containers)
+		if err != nil {
+			return err
+		}
+	}
+	podSpec := &corev1.PodSpec{}
+	decoder := yaml.NewYAMLOrJSONDecoder(f, 512)
+	if err = decoder.Decode(podSpec); err != nil {
+		return err
+	}
+	spec.Containers = append(spec.Containers, podSpec.Containers...)
+	return f.Close()
 }
 
 // =======================================================================================
