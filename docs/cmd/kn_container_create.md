@@ -10,11 +10,11 @@ kn container create NAME
 
 ```
 
-  The 'container create' represents utility command that prints YAML container spec to standard output. It's useful for 
+  The 'container create' represents utility command that prints YAML container spec to standard output. It's useful for
   multi-container use cases to create definition with help of standard 'kn' option flags. The command can be chained through
   Unix pipes to create multiple containers at once.
 
-  # Create a container 'sidecart' from image 'docker.io/example/sidecart' 
+  # Create a container 'sidecart' from image 'docker.io/example/sidecart'
   kn container create sidecart --image docker.io/example/sidecart
 
   # Create command can be chained by standard Unix pipe symbol '|'
