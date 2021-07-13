@@ -16,7 +16,7 @@ kn container create NAME
 
   # Create a container 'sidecart' from image 'docker.io/example/sidecart' 
   kn container create sidecart --image docker.io/example/sidecart
-  
+
   # Create command can be chained by standard Unix pipe symbol '|'
   kn container create sidecart --image docker.io/example/sidecart | \
   kn container create second --image docker.io/example/sidecart:second

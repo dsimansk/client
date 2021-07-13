@@ -258,6 +258,7 @@ func UpdateImagePullSecrets(spec *corev1.PodSpec, pullsecrets string) {
 	}
 }
 
+// UpdateContainers updates the containers array with additional ones provided from file or os.Stdin
 func UpdateContainers(spec *corev1.PodSpec, containers string) error {
 	var f *os.File
 	var err error
