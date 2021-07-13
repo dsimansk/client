@@ -27,7 +27,7 @@ func TestContainerCreate(t *testing.T) {
 	output, err := executeContainerCommand("create", "foo", "--image", "registry.foo:bar")
 	assert.NilError(t, err)
 	assert.Assert(t, len(output) > 0)
-	assert.Assert(t, util.ContainsAllIgnoreCase(output, "containers", "image", "registry.foo:bar"))
+	assert.Assert(t, util.ContainsAllIgnoreCase(output, "containers", "image", "foo", "registry.foo:bar"))
 }
 
 func TestDetectPipeInput(t *testing.T) {
@@ -44,5 +44,8 @@ func TestDetectPipeInput(t *testing.T) {
 
 	// os.Stdin is not piped
 	piped = detectPipeInput(os.Stdin)
+	assert.Assert(t, piped == false)
+
+	piped = detectPipeInput(nil)
 	assert.Assert(t, piped == false)
 }

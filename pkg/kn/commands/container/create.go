@@ -53,7 +53,7 @@ func NewContainerCreateCommand(p *commands.KnParams) *cobra.Command {
 				name = args[0]
 			}
 			// Detect pipe input from previous container command
-			if podSpecFlags.Containers == "" && detectPipeInput(os.Stdin) {
+			if detectPipeInput(os.Stdin) {
 				podSpecFlags.Containers = "-"
 			}
 			podSpec := &corev1.PodSpec{}

@@ -276,10 +276,12 @@ func (p *PodSpecFlags) ResolvePodSpec(podSpec *corev1.PodSpec, flags *pflag.Flag
 	}
 
 	if flags.Changed("containers") || p.Containers == "-" {
-		err = UpdateContainers(podSpec, p.Containers)
+		var fromFile *corev1.PodSpec
+		fromFile, err = decodeContainersFromFile(p.Containers)
 		if err != nil {
 			return err
 		}
+		UpdateContainers(podSpec, fromFile.Containers)
 	}
 
 	return nil
