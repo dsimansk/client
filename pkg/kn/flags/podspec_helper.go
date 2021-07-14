@@ -654,7 +654,6 @@ func decodeContainersFromFile(filename string) (*corev1.PodSpec, error) {
 		f = os.Stdin
 	} else {
 		f, err = os.Open(filename)
-		defer f.Close()
 		if err != nil {
 			return nil, err
 		}
@@ -664,5 +663,5 @@ func decodeContainersFromFile(filename string) (*corev1.PodSpec, error) {
 	if err = decoder.Decode(podSpec); err != nil {
 		return nil, err
 	}
-	return podSpec, nil
+	return podSpec, f.Close()
 }
