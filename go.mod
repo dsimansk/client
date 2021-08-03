@@ -28,5 +28,5 @@ require (
 
 replace github.com/go-openapi/spec => github.com/go-openapi/spec v0.19.3
 
-//TODO: replace once func release is cut
-replace knative.dev/kn-plugin-func => knative.dev/kn-plugin-func v0.16.1-0.20210802153742-92b309f7916a
+//Using main@9db1a3d902016d59e60b732de43bdf4be198334f for the release
+replace knative.dev/kn-plugin-func => knative.dev/kn-plugin-func v0.16.1-0.20210803132815-9db1a3d90201
