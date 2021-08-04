@@ -28,8 +28,10 @@ readonly OLM_NAMESPACE="openshift-marketplace"
 # if you want to setup the nightly serving/eventing, set `release-next` OR
 # set release branch name for example: release-v0.19.1
 readonly SERVING_BRANCH="release-next"
-# Pin the version due to issue in current nightly version
 readonly EVENTING_BRANCH="release-next"
+
+# The value should be updated once S-O release branch is cut
+readonly SERVERLESS_BRANCH="main"
 
 # Determine if we're running locally or in CI.
 if [ -n "$OPENSHIFT_BUILD_NAMESPACE" ]; then
@@ -188,6 +190,40 @@ install_knative_eventing_branch() {
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
   header "Knative Eventing installed successfully"
   popd
+}
+
+install_serverless_operator_branch() {
+  local branch=$1
+  local operator_dir=/tmp/serverless-operator
+  local failed=0
+  header "Installing serverless operator from openshift-knative/serverless-operator branch $branch"
+  rm -rf $operator_dir
+  git clone --branch $branch https://github.com/openshift-knative/serverless-operator.git $operator_dir || failed=1
+  pushd $operator_dir
+  # unset OPENSHIFT_BUILD_NAMESPACE (old CI) and OPENSHIFT_CI (new CI) as its used in serverless-operator's CI
+  # environment as a switch to use CI built images, we want pre-built images of k-s-o and k-o-i
+  unset OPENSHIFT_BUILD_NAMESPACE
+  unset OPENSHIFT_CI
+
+  # Install all components Serving,Eventing,Strimzi and Kafka
+  make install-all || failed=1
+  subheader "Successfully installed serverless operator."
+
+  header "Applying Strimzi Topic CR"
+  cat <<-EOF | oc apply -n kafka -f - || failed=1
+apiVersion: kafka.strimzi.io/v1beta1
+kind: KafkaTopic
+metadata:
+  name: test-topic
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 100
+  replicas: 1
+EOF
+
+  popd
+  return $failed
 }
 
 # Add to exec script if needed
