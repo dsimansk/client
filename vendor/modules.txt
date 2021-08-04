@@ -1255,7 +1255,7 @@ knative.dev/eventing-kafka/pkg/common/constants
 # knative.dev/hack v0.0.0-20210602212444-509255f29a24
 ## explicit
 knative.dev/hack
-# knative.dev/kn-plugin-func v0.17.0 => knative.dev/kn-plugin-func v0.16.1-0.20210803132815-9db1a3d90201
+# knative.dev/kn-plugin-func v0.17.0
 ## explicit
 knative.dev/kn-plugin-func
 knative.dev/kn-plugin-func/buildpacks
@@ -1379,4 +1379,3 @@ sigs.k8s.io/structured-merge-diff/v4/value
 ## explicit
 sigs.k8s.io/yaml
 # github.com/go-openapi/spec => github.com/go-openapi/spec v0.19.3
-# knative.dev/kn-plugin-func => knative.dev/kn-plugin-func v0.16.1-0.20210803132815-9db1a3d90201
