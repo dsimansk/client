@@ -1255,7 +1255,7 @@ knative.dev/eventing-kafka/pkg/common/constants
 # knative.dev/hack v0.0.0-20210602212444-509255f29a24
 ## explicit
 knative.dev/hack
-# knative.dev/kn-plugin-func v0.17.0
+# knative.dev/kn-plugin-func v0.17.1
 ## explicit
 knative.dev/kn-plugin-func
 knative.dev/kn-plugin-func/buildpacks
