@@ -1,4 +1,5 @@
 FROM openshift/origin-base
+USER 65532
 
 ADD helloworld /ko-app/helloworld
 
