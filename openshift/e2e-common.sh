@@ -39,6 +39,8 @@ if [ -n "$OPENSHIFT_BUILD_NAMESPACE" ]; then
 {{- with .Name }}
 {{- if eq . "helloworld"}}$KNATIVE_CLIENT_TEST_HELLOWORLD{{end -}}
 {{- if eq . "grpc-ping"}}$KNATIVE_CLIENT_TEST_GRPC_PING{{end -}}
+{{- if eq . "servingcontainer"}}$KNATIVE_CLIENT_TEST_SERVINGCONTAINER{{end -}}
+{{- if eq . "sidecarcontainer"}}$KNATIVE_CLIENT_TEST_SIDECARCONTAINER{{end -}}
 {{end -}}
 END
 )
