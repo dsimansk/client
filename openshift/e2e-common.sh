@@ -172,6 +172,12 @@ install_knative_serving_branch() {
 
   source "openshift/e2e-common.sh"
   IMAGE_FORMAT='registry.ci.openshift.org/openshift/knative-nightly:${component}' install_knative || failed=1
+  
+  # Workaround default 'https' scheme
+  oc patch knativeserving.operator.knative.dev/knative-serving \
+    --namespace knative-serving --type merge \
+    --patch '{"spec":{"config":{"network":{"defaultExternalScheme":"http"}}}}' || return 1
+  
   popd
   return $failed
 }
@@ -216,6 +222,11 @@ install_serverless_operator_branch() {
   # Install all components Serving,Eventing,Strimzi and Kafka
   make install-all || failed=1
   subheader "Successfully installed serverless operator."
+  
+  # Workaround default 'https' scheme
+  oc patch knativeserving.operator.knative.dev/knative-serving \
+    --namespace knative-serving --type merge \
+    --patch '{"spec":{"config":{"network":{"defaultExternalScheme":"http"}}}}' || return 1
 
   header "Applying Strimzi Topic CR"
   cat <<-EOF | oc apply -n kafka -f - || failed=1
