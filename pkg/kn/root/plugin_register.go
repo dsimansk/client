@@ -18,6 +18,7 @@ package root
 
 import (
 	// Add #plugins# import here. Don't remove this line, it triggers an automatic replacement.
+	_ "knative.dev/kn-plugin-func/plugin"
 	_ "knative.dev/kn-plugin-source-kafka/plugin"
 )
 
