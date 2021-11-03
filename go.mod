@@ -29,4 +29,4 @@ require (
 
 replace github.com/go-openapi/spec => github.com/go-openapi/spec v0.19.3
 
-replace knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.18.1-0.20211103194307-d8d721a8334a
+replace knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.19.1-0.20211103201756-d595897e6db0
