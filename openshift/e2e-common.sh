@@ -22,7 +22,7 @@ readonly KN_DEFAULT_TEST_IMAGE="gcr.io/knative-samples/helloworld-go"
 readonly SERVING_NAMESPACE="knative-serving"
 readonly SERVING_INGRESS_NAMESPACE="knative-serving-ingress"
 readonly EVENTING_NAMESPACE="knative-eventing"
-readonly E2E_TIMEOUT="60m"
+readonly E2E_TIMEOUT="180m"
 readonly OLM_NAMESPACE="openshift-marketplace"
 
 # if you want to setup the nightly serving/eventing, set `release-next` OR
