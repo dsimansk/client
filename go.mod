@@ -29,5 +29,4 @@ require (
 
 replace github.com/go-openapi/spec => github.com/go-openapi/spec v0.19.3
 
-//TODO: use released version of `func` from midstream repo instead of release-next branch
-replace knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.18.1-0.20211103003515-8c591c42b389
+replace knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.18.1-0.20211103194307-d8d721a8334a
