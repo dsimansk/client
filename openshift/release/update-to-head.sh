@@ -28,7 +28,6 @@ OWNERS
 Makefile
 package_cliartifacts.sh
 openshift-serverless-clients.spec
-serve.py
 EOT
 )
 
