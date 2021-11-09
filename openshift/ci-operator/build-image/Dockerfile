@@ -17,7 +17,7 @@ FROM registry.ci.openshift.org/openshift/release:golang-1.16
 
 RUN yum install -y ansible httpd-tools
 
-RUN go install github.com/mikefarah/yq/v3
+RUN GO111MODULE=on go get github.com/mikefarah/yq/v3
 
 # Allow runtime users to add entries to /etc/passwd
 RUN chmod g+rw /etc/passwd
