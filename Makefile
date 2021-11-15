@@ -16,7 +16,7 @@
 
 CGO_ENABLED=0
 GOOS=linux
-TEST_IMAGES=$(shell find -L ./test/test_images ./vendor/knative.dev/serving/test/test_images/multicontainer -mindepth 1 -maxdepth 2 -type f -name "*.go" -exec dirname {} \;)
+TEST_IMAGES=$(shell find -L ./test/test_images ./vendor/knative.dev/serving/test/test_images/grpc-ping ./vendor/knative.dev/serving/test/test_images/multicontainer -mindepth 1 -maxdepth 2 -type f -name "*.go" -exec dirname {} \;)
 TEST=
 DOCKER_REPO_OVERRIDE=
 
