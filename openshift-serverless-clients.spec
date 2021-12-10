@@ -29,7 +29,9 @@ Client kn provides developer experience to work with Knative Serving APIs.
 %setup -q -n %{source_dir}
 
 %build
-TAG=%{kn_cli_version} KN_PLUGIN_EVENT_SENDER_IMAGE=%{kn_event_image} make build-cross
+TAG=%{kn_cli_version} \
+KN_PLUGIN_EVENT_SENDER_IMAGE=%{kn_event_image} \
+make build-cross
 
 %install
 mkdir -p %{buildroot}/%{_bindir}
