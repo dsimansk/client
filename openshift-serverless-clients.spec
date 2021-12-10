@@ -6,7 +6,7 @@
 %global kn_version 0.26.0
 %global kn_release 1
 %global kn_cli_version v%{kn_version}
-%global kn_event_image sender-nvr
+%global kn_event_image %{nil}
 %global source_dir knative-client
 %global source_tar %{source_dir}-%{kn_version}-%{kn_release}.tar.gz
 
