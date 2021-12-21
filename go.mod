@@ -30,6 +30,5 @@ require (
 replace (
 	k8s.io/apimachinery => k8s.io/apimachinery v0.21.4
 	knative.dev/kn-plugin-event => github.com/openshift-knative/kn-plugin-event v0.26.2-0.20211209202740-89c860ca5062
-	// TODO: use release branch instread of current `release-next`
-	knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.19.1-0.20211209011132-6e9942151b08
+	knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.20.0
 )

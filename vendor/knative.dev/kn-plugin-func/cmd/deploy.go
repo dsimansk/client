@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"os"
+
+	fnhttp "knative.dev/kn-plugin-func/http"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
@@ -13,6 +16,7 @@ import (
 	fn "knative.dev/kn-plugin-func"
 	"knative.dev/kn-plugin-func/buildpacks"
 	"knative.dev/kn-plugin-func/docker"
+	"knative.dev/kn-plugin-func/docker/creds"
 	"knative.dev/kn-plugin-func/knative"
 	"knative.dev/kn-plugin-func/progress"
 )
@@ -26,13 +30,14 @@ func newDeployClient(cfg deployConfig) (*fn.Client, error) {
 
 	builder := buildpacks.NewBuilder()
 
-	credentialsProvider := docker.NewCredentialsProvider(
-		newCredentialsCallback(),
-		docker.CheckAuth,
-		newChooseHelperCallback())
+	credentialsProvider := creds.NewCredentialsProvider(
+		creds.WithPromptForCredentials(newPromptForCredentials()),
+		creds.WithPromptForCredentialStore(newPromptForCredentialStore()),
+		creds.WithTransport(cfg.Transport))
 	pusher, err := docker.NewPusher(
 		docker.WithCredentialsProvider(credentialsProvider),
-		docker.WithProgressListener(listener))
+		docker.WithProgressListener(listener),
+		docker.WithTransport(cfg.Transport))
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +180,10 @@ func runDeploy(cmd *cobra.Command, _ []string, clientFn deployClientFn) (err err
 		config.Registry = ""
 	}
 
+	rt := fnhttp.NewRoundTripper()
+	defer rt.Close()
+	config.Transport = rt
+
 	client, err := clientFn(config)
 	if err != nil {
 		if err == terminal.InterruptErr {
@@ -195,7 +204,7 @@ func runDeploy(cmd *cobra.Command, _ []string, clientFn deployClientFn) (err err
 	// (for example kubectl usually uses ~/.kube/config)
 }
 
-func newCredentialsCallback() func(registry string) (docker.Credentials, error) {
+func newPromptForCredentials() func(registry string) (docker.Credentials, error) {
 	firstTime := true
 	return func(registry string) (docker.Credentials, error) {
 		var result docker.Credentials
@@ -229,7 +238,7 @@ func newCredentialsCallback() func(registry string) (docker.Credentials, error) 
 	}
 }
 
-func newChooseHelperCallback() docker.ChooseCredentialHelperCallback {
+func newPromptForCredentialStore() creds.ChooseCredentialHelperCallback {
 	return func(availableHelpers []string) (string, error) {
 		if len(availableHelpers) < 1 {
 			fmt.Fprintf(os.Stderr, `Credentials will not be saved.
@@ -285,6 +294,8 @@ type deployConfig struct {
 
 	// Envs passed via cmd to removed
 	EnvToRemove []string
+
+	Transport http.RoundTripper
 }
 
 // newDeployConfig creates a buildConfig populated from command flags and

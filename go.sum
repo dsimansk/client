@@ -1156,8 +1156,8 @@ github.com/opencontainers/selinux v1.8.2 h1:c4ca10UMgRcvZ6h0K4HtS15UaVSBEaE+iln2
 github.com/opencontainers/selinux v1.8.2/go.mod h1:MUIHuUEvKB1wtJjQdOyYRgOnLD2xAPP8dBsCoU0KuF8=
 github.com/openshift-knative/kn-plugin-event v0.26.2-0.20211209202740-89c860ca5062 h1:SolI+Rwqy058Dofm6naxk9y3vzQ4anT69UQWKoB0zHI=
 github.com/openshift-knative/kn-plugin-event v0.26.2-0.20211209202740-89c860ca5062/go.mod h1:naLIG+DrwI78CKuuuJB8C0D1X/ySUzolzmgctV4+vZQ=
-github.com/openshift-knative/kn-plugin-func v0.19.1-0.20211209011132-6e9942151b08 h1:NkAt/jTei6duqeVe7YgBEiRiROYTtwhwAI9PBTvzngw=
-github.com/openshift-knative/kn-plugin-func v0.19.1-0.20211209011132-6e9942151b08/go.mod h1:1PbnyT3BJ3dvxDuMQk5ej0gHG+uy/ryH6AS71LhJf1k=
+github.com/openshift-knative/kn-plugin-func v0.20.0 h1:aAsgqZpDMALMl8McJB2nUMj/sCuYHhbcTvg8fLZlTfQ=
+github.com/openshift-knative/kn-plugin-func v0.20.0/go.mod h1:1PbnyT3BJ3dvxDuMQk5ej0gHG+uy/ryH6AS71LhJf1k=
 github.com/opentracing-contrib/go-observer v0.0.0-20170622124052-a52f23424492/go.mod h1:Ngi6UdF0k5OKD5t5wlmGhe/EDKPoUM3BXZSSfIuJbis=
 github.com/opentracing/basictracer-go v1.0.0/go.mod h1:QfBfYuafItcjQuMwinw9GhYKwFXS9KnPs5lxoYwgW74=
 github.com/opentracing/opentracing-go v1.0.2/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
