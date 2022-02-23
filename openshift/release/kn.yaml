@@ -3,10 +3,10 @@ plugins:
     module: knative.dev/kn-plugin-source-kafka
     pluginImportPath: knative.dev/kn-plugin-source-kafka/plugin
     version: v0.27.0
-  #- name: func
-    #module: knative.dev/kn-plugin-func
-    #pluginImportPath: knative.dev/kn-plugin-func/plugin
-    #version: v0.20.0
-    #replace:
-    #  - module: knative.dev/kn-plugin-func
-    #    version: main
+  - name: func
+    module: knative.dev/kn-plugin-func
+    pluginImportPath: knative.dev/kn-plugin-func/plugin
+    version: v0.21.0
+    replace:
+      - module: knative.dev/kn-plugin-func
+        version: openshift-v0.21.0
