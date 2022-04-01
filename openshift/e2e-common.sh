@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-readonly ROOT_DIR=$(dirname $0)/..
-source ${ROOT_DIR}/vendor/knative.dev/hack/library.sh
-source ${ROOT_DIR}/vendor/knative.dev/hack/e2e-tests.sh
+readonly ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]:-$0}")/..")"
+source "${ROOT_DIR}/vendor/knative.dev/hack/library.sh"
+source "${ROOT_DIR}/vendor/knative.dev/hack/e2e-tests.sh"
 
 readonly KN_DEFAULT_TEST_IMAGE="gcr.io/knative-samples/helloworld-go"
 readonly SERVING_NAMESPACE="knative-serving"
@@ -118,6 +118,38 @@ run_client_e2e_tests(){
     ${run_append} || failed=$?
 
   return $failed
+}
+
+run_kn_event_e2e_tests() {
+  local knEventVersion knEventRelease
+
+  KN_PLUGIN_EVENT_WATHOLA_HOMEDIR="${KN_PLUGIN_EVENT_WATHOLA_HOMEDIR:-}"
+  KN_PLUGIN_EVENT_EXECUTABLE="${KN_PLUGIN_EVENT_EXECUTABLE:-${ROOT_DIR}/kn}"
+  KN_PLUGIN_EVENT_EXECUTABLE_ARGS="${KN_PLUGIN_EVENT_EXECUTABLE_ARGS:-event}"
+
+  knEventVersion="$("${KN_PLUGIN_EVENT_EXECUTABLE}" event version -o json | jq -r .version)"
+  knEventRelease="${knEventVersion%.*}"
+  knEventRelease="${knEventRelease#v}"
+
+  KN_PLUGIN_EVENT_BRANCH="${KN_PLUGIN_EVENT_BRANCH:-release-${knEventRelease}}"
+  TEST_IMAGES_EVENTSHUB="${TEST_IMAGES_EVENTSHUB:-registry.ci.openshift.org/knative/${KN_PLUGIN_EVENT_BRANCH}:client-plugin-event-test-eventshub}"
+  TEST_IMAGES_WATHOLA_FORWARDER="${TEST_IMAGES_WATHOLA_FORWARDER:-registry.ci.openshift.org/knative/${KN_PLUGIN_EVENT_BRANCH}:client-plugin-event-test-wathola-forwarder}"
+
+  export KN_PLUGIN_EVENT_WATHOLA_HOMEDIR \
+    KN_PLUGIN_EVENT_EXECUTABLE \
+    KN_PLUGIN_EVENT_EXECUTABLE_ARGS \
+    KN_PLUGIN_EVENT_BRANCH \
+    TEST_IMAGES_EVENTSHUB \
+    TEST_IMAGES_WATHOLA_FORWARDER
+
+  go run gotest.tools/gotestsum@latest \
+    --junitfile "${ARTIFACTS}/kn-event-tests.xml" \
+    --junitfile-testsuite-name relative \
+    --junitfile-testcase-classname relative \
+    --jsonfile "${ARTIFACTS}/kn-event-log.jsonl" \
+    --format testname \
+    -- -timeout=5m -tags=e2e -race -count=1 \
+    ./openshift/test/e2e/knevent/...
 }
 
 # Waits until all pods are running in the given namespace.

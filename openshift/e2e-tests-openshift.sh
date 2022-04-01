@@ -26,6 +26,8 @@ else
   (( !failed )) && run_client_e2e_tests eventing || failed=1
 fi
 
+(( !failed )) && run_kn_event_e2e_tests || failed=1
+
 (( failed )) && exit 1
 
 success
