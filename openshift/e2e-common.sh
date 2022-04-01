@@ -142,6 +142,7 @@ run_kn_event_e2e_tests() {
     TEST_IMAGES_EVENTSHUB \
     TEST_IMAGES_WATHOLA_FORWARDER
 
+  GOPATH="$(mktemp -t -d -u gopath.XXXXXXXX)" \
   go run gotest.tools/gotestsum@latest \
     --junitfile "${ARTIFACTS}/kn-event-tests.xml" \
     --junitfile-testsuite-name relative \
