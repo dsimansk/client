@@ -35,5 +35,6 @@ replace (
 	k8s.io/client-go => k8s.io/client-go v0.21.4
 	k8s.io/code-generator => k8s.io/code-generator v0.21.4
 	knative.dev/kn-plugin-event => github.com/openshift-knative/kn-plugin-event v0.27.1-0.20220223114256-af13ecf492aa
-	knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v0.22.1-0.20220404193928-15431c314b22
+	// Points to https://github.com/openshift-knative/kn-plugin-func/commit/ed9795ba813a5c96209fb4416a1b328af7c4ce0d
+	knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v1.1.3-0.20220406191418-ed9795ba813a
 )
