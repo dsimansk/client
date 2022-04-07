@@ -3,7 +3,7 @@
 
 source "$(dirname "$0")/e2e-common.sh"
 
-set -Eeuox pipefail
+set -Eeuo pipefail
 
 failed=0
 

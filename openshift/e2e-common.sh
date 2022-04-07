@@ -15,6 +15,12 @@
 # limitations under the License.
 
 readonly ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]:-$0}")/..")"
+
+if [[ -n "${ARTIFACT_DIR:-}" ]]; then
+  export ARTIFACTS="${ARTIFACT_DIR}"
+  mkdir -p "${ARTIFACTS}"
+fi
+
 source "${ROOT_DIR}/vendor/knative.dev/hack/library.sh"
 source "${ROOT_DIR}/vendor/knative.dev/hack/e2e-tests.sh"
 
@@ -134,20 +140,28 @@ run_kn_event_e2e_tests() {
   KN_PLUGIN_EVENT_BRANCH="${KN_PLUGIN_EVENT_BRANCH:-release-${knEventRelease}}"
   TEST_IMAGES_EVENTSHUB="${TEST_IMAGES_EVENTSHUB:-registry.ci.openshift.org/knative/${KN_PLUGIN_EVENT_BRANCH}:client-plugin-event-test-eventshub}"
   TEST_IMAGES_WATHOLA_FORWARDER="${TEST_IMAGES_WATHOLA_FORWARDER:-registry.ci.openshift.org/knative/${KN_PLUGIN_EVENT_BRANCH}:client-plugin-event-test-wathola-forwarder}"
+  KN_PLUGIN_EVENT_TEST_ARTIFACTS_JUNIT="${KN_PLUGIN_EVENT_TEST_ARTIFACTS_JUNIT:-${ARTIFACTS}/kn-event-tests.xml}"
+  KN_PLUGIN_EVENT_TEST_ARTIFACTS_JSONL="${KN_PLUGIN_EVENT_TEST_ARTIFACTS_JSONL:-${ARTIFACTS}/kn-event-log.jsonl}"
 
-  export KN_PLUGIN_EVENT_WATHOLA_HOMEDIR \
+  echo '>>> The kn-plugin-event environment variables:'
+  for e in KN_PLUGIN_EVENT_WATHOLA_HOMEDIR \
     KN_PLUGIN_EVENT_EXECUTABLE \
     KN_PLUGIN_EVENT_EXECUTABLE_ARGS \
     KN_PLUGIN_EVENT_BRANCH \
     TEST_IMAGES_EVENTSHUB \
-    TEST_IMAGES_WATHOLA_FORWARDER
+    TEST_IMAGES_WATHOLA_FORWARDER \
+    KN_PLUGIN_EVENT_TEST_ARTIFACTS_JUNIT \
+    KN_PLUGIN_EVENT_TEST_ARTIFACTS_JSONL; do
+      export "${e?}"
+      echo " * ${e}: ${!e}"
+  done
 
   GOPATH="$(mktemp -t -d -u gopath.XXXXXXXX)" \
   go run gotest.tools/gotestsum@latest \
-    --junitfile "${ARTIFACTS}/kn-event-tests.xml" \
+    --junitfile "${KN_PLUGIN_EVENT_TEST_ARTIFACTS_JUNIT}" \
     --junitfile-testsuite-name relative \
     --junitfile-testcase-classname relative \
-    --jsonfile "${ARTIFACTS}/kn-event-log.jsonl" \
+    --jsonfile "${KN_PLUGIN_EVENT_TEST_ARTIFACTS_JSONL}" \
     --format testname \
     -- -timeout=5m -tags=e2e -race -count=1 \
     ./openshift/test/e2e/knevent/...
