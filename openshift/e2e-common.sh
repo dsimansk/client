@@ -139,7 +139,7 @@ run_kn_event_e2e_tests() {
 
   KN_PLUGIN_EVENT_BRANCH="${KN_PLUGIN_EVENT_BRANCH:-release-${knEventRelease}}"
   TEST_IMAGES_EVENTSHUB="${TEST_IMAGES_EVENTSHUB:-registry.ci.openshift.org/knative/${KN_PLUGIN_EVENT_BRANCH}:client-plugin-event-test-eventshub}"
-  TEST_IMAGES_WATHOLA_FORWARDER="${TEST_IMAGES_WATHOLA_FORWARDER:-registry.ci.openshift.org/knative/${KN_PLUGIN_EVENT_BRANCH}:client-plugin-event-test-wathola-forwarder}"
+  TEST_IMAGES_WATHOLA_FORWARDER="${TEST_IMAGES_WATHOLA_FORWARDER:-registry.ci.openshift.org/openshift/knative-v1.1.0:knative-eventing-test-wathola-forwarder}"
   KN_PLUGIN_EVENT_TEST_ARTIFACTS_JUNIT="${KN_PLUGIN_EVENT_TEST_ARTIFACTS_JUNIT:-${ARTIFACTS}/kn-event-tests.xml}"
   KN_PLUGIN_EVENT_TEST_ARTIFACTS_JSONL="${KN_PLUGIN_EVENT_TEST_ARTIFACTS_JSONL:-${ARTIFACTS}/kn-event-log.jsonl}"
 
