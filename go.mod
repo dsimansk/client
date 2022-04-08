@@ -23,7 +23,6 @@ require (
 	knative.dev/kn-plugin-source-kafka v0.28.0
 	knative.dev/networking v0.0.0-20220120045035-ec849677a316
 	knative.dev/pkg v0.0.0-20220222214539-0b8a9403de7e
-	knative.dev/reconciler-test v0.0.0-20211207070557-0d138a88867b
 	knative.dev/serving v0.28.4
 	sigs.k8s.io/yaml v1.3.0
 )
