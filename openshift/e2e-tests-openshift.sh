@@ -3,7 +3,7 @@
 
 source "$(dirname "$0")/e2e-common.sh"
 
-set -Eeuox pipefail
+set -Eeuo pipefail
 
 failed=0
 
@@ -25,6 +25,8 @@ else
   (( !failed )) && run_client_e2e_tests serving || failed=1
   (( !failed )) && run_client_e2e_tests eventing || failed=1
 fi
+
+(( !failed )) && run_kn_event_e2e_tests || failed=1
 
 (( failed )) && exit 1
 
