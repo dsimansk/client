@@ -17,9 +17,10 @@ limitations under the License.
 package root
 
 import (
-	// Add #plugins# import here. Don't remove this line, it triggers an automatic replacement.
-	_ "knative.dev/kn-plugin-event/pkg/plugin"
-	_ "knative.dev/kn-plugin-source-kafka/plugin"
+    // Add #plugins# import here. Don't remove this line, it triggers an automatic replacement.
+    _ "knative.dev/kn-plugin-event/pkg/plugin"
+    _ "knative.dev/kn-plugin-func/plugin"
+    _ "knative.dev/kn-plugin-source-kafka/plugin"
 )
 
 // RegisterInlinePlugins is an empty function which however forces the

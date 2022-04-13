@@ -3,3 +3,7 @@ plugins:
     module: knative.dev/kn-plugin-source-kafka
     pluginImportPath: knative.dev/kn-plugin-source-kafka/plugin
     version: v0.28.0
+  - name: kn-plugin-func
+    module: knative.dev/kn-plugin-func
+    pluginImportPath: knative.dev/kn-plugin-func
+    version: v0.23.1
