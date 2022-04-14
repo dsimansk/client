@@ -16,7 +16,7 @@ function build_flags() {
   local base="${1}"
   local now rev
   now="$(date -u '+%Y-%m-%d %H:%M:%S')"
-  rev="$(git rev-parse --short HEAD)"
+  rev="${KN_GIT_REV:-$(git rev-parse --short HEAD)}"
   local pkg="knative.dev/client/pkg/kn/commands/version"
   local version="${TAG:-}"
   local major_minor="$(echo "${version}" | cut -f1-2 -d. -n)"
