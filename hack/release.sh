@@ -21,11 +21,7 @@ source $(dirname $0)/../vendor/knative.dev/hack/release.sh
 source $(dirname $0)/build-flags.sh
 
 function build_release() {
-  local ld_flags="$(build_flags $(dirname $0)/..)"
-  local pkg="knative.dev/client/pkg/kn/commands"
-  local version="${TAG}"
-  # Use vYYYYMMDD-<hash>-local for the version string, if not passed.
-  [[ -z "${version}" ]] && version="v${BUILD_TAG}-local"
+  local ld_flags="${KN_BUILD_LD_FLAGS:-}"
 
   export GO111MODULE=on
   export CGO_ENABLED=0

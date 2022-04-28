@@ -128,7 +128,7 @@ source_lint() {
 
 go_build() {
   echo "🚧 Compile"
-  go build -mod=vendor -ldflags "$(build_flags "$(basedir)")" -o kn ./cmd/...
+  go build -mod=vendor -ldflags "${KN_BUILD_LD_FLAGS:-}" -o kn ./cmd/...
 
   if $(file kn | grep -q -i "Windows"); then
     mv kn kn.exe
@@ -267,7 +267,7 @@ has_flag() {
 cross_build() {
   local basedir ld_flags
   basedir=$(basedir)
-  ld_flags="$(build_flags $basedir)"
+  ld_flags="${KN_BUILD_LD_FLAGS:-}"
   local failed=0
 
   echo "⚔️ ${S}Compile"
