@@ -3,9 +3,8 @@ module knative.dev/client
 go 1.16
 
 require (
-	github.com/emicklei/go-restful v2.15.0+incompatible // indirect
 	github.com/google/go-cmp v0.5.6
-	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc // indirect
+	github.com/maximilien/kn-source-pkg v0.6.3
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
@@ -20,6 +19,7 @@ require (
 	k8s.io/code-generator v0.22.5
 	knative.dev/eventing v0.29.0
 	knative.dev/hack v0.0.0-20220118141833-9b2ed8471e30
+	knative.dev/kn-plugin-source-kafka v0.29.0
 	knative.dev/networking v0.0.0-20220120043934-ec785540a732
 	knative.dev/pkg v0.0.0-20220118160532-77555ea48cd4
 	knative.dev/serving v0.29.0
