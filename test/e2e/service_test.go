@@ -54,7 +54,7 @@ func TestService(t *testing.T) {
 	it, err := test.NewKnTest()
 	assert.NilError(t, err)
 	defer func() {
-		assert.NilError(t, it.Teardown())
+		//	assert.NilError(t, it.Teardown())
 	}()
 
 	r := test.NewKnRunResultCollector(t, it)
@@ -230,6 +230,10 @@ func serviceCreateWithMount(r *test.KnRunResultCollector) {
 	out = r.KnTest().Kn().Run("service", "update", "test-svc", "--mount", "/mydir4=ed:myvol:type=Memory,size=100Mi")
 	r.AssertNoError(out)
 
+	r.T().Log("create service with configmap mounted")
+	out = r.KnTest().Kn().Run("service", "create", "test-svc-pvc", "--image", pkgtest.ImagePath("helloworld"))
+	r.AssertNoError(out)
+
 	r.T().Log("create PVC test-pvc")
 	fp, err := ioutil.TempFile("", "my-pvc")
 	assert.NilError(r.T(), err)
@@ -241,15 +245,15 @@ func serviceCreateWithMount(r *test.KnRunResultCollector) {
 	r.AssertNoError(out)
 
 	_, err = kubectl.Run("wait", "--for='jsonpath={..status.phase}'=Bound", "pvc/test-pvc", "--timeout=30s")
-	if err == nil {
-		r.T().Log("update service with a new pvc mount")
-		out = r.KnTest().Kn().Run("service", "update", "test-svc", "--mount", "/mydir5=pvc:test-pvc")
-		r.AssertNoError(out)
+	//if err == nil {
+	r.T().Log("update service with a new pvc mount")
+	out = r.KnTest().Kn().Run("service", "update", "test-svc-pvc", "--mount", "/mydir5=pvc:test-pvc")
+	r.AssertNoError(out)
 
-		serviceDescribeMount(r, "test-svc", "/mydir", "key")
-	} else {
-		r.T().Log("PVC test skip due to unsatisfied PVC")
-	}
+	serviceDescribeMount(r, "test-svc", "/mydir", "key")
+	//} else {
+	r.T().Log("PVC test skip due to unsatisfied PVC")
+	//}
 
 }
 
