@@ -132,6 +132,108 @@ git push
 ```
 Create a new pull request to update `main` branch.
 
+### Plugins
+
+Currently, we ship 3 plugin within productized `kn` binary. It's achieved by mechanism called "plugin inlining", for futher reference see upstream's docs.
+In a nutshell it's plugin defined as a dependency by empty import in `plugin_register.go` [file](https://github.com/openshift/knative-client/blob/release-v1.1.0/pkg/kn/root/plugin_register.go) and then vendored through standard Go modules.
+
+Midstream plugins:
+* kn-plugin-event
+* kn-plugin-func
+
+Upstream plugins:
+* kn-plugin-source-kafka
+
+
+Similar to other midstream repositories, a midstream plugin is the potentially modified source of its upstream counterpart.
+An upstream plugin is taken directly from Knative release without any further modification.
+
+There's a tool called [kn builder](https://github.com/knative/client/tree/main/tools/knb) (`knb`) to assist adding and generating necessary sources for plugins.
+
+The following steps should be performed for each plugin.
+
+* Create a `knb` config file in `./openshift/release/kn.yaml`
+```yaml
+plugins:
+  - name: kn-plugin-source-kafka
+    module: knative.dev/kn-plugin-source-kafka
+    pluginImportPath: knative.dev/kn-plugin-source-kafka/plugin
+    version: v0.28.0
+  - name: kn-plugin-func
+    module: knative.dev/kn-plugin-func
+    pluginImportPath: knative.dev/kn-plugin-func
+    version: v0.23.1
+  - name: kn-plugin-event
+    module: knative.dev/kn-plugin-event
+    pluginImportPath: knative.dev/kn-plugin-event/pkg/plugin
+    version: v0.28.0
+```
+NOTE: knb is lacking midstream replace support. That's solved in further steps.
+
+* Use `knb` to populate registration file and go modules
+```console
+$ knb plugin distro -c openshift/release/kn.yaml
+```
+
+* Go modules `require` 
+```go
+// All the plugins should be already added, 
+// but modules versions are used as display version for func and event plugin.
+// Event plugin uses corresponding upstream's 1.x scheme
+knative.dev/kn-plugin-event v1.1.1
+// Func plugin uses corresponding upstream's 0.x.y
+knative.dev/kn-plugin-func v0.23.1
+// No modification needed
+knative.dev/kn-plugin-source-kafka v0.28.0
+```
+
+* Go modules `replace`
+```go
+replace (
+	// Required by kn-plugin-func to use newer Docker version
+	github.com/openshift/source-to-image => github.com/boson-project/source-to-image v1.3.2
+
+	// Aligned k8s.io version with Knative release
+	k8s.io/api => k8s.io/api v0.21.4
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.21.4
+	k8s.io/apimachinery => k8s.io/apimachinery v0.21.4
+	k8s.io/client-go => k8s.io/client-go v0.21.4
+	k8s.io/code-generator => k8s.io/code-generator v0.21.4
+  
+	// Inlined plugins
+	knative.dev/kn-plugin-event => github.com/openshift-knative/kn-plugin-event release-1.1
+	knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func openshift-v0.23.1
+)
+```
+Depending on the release, there're usually several other replacements to align with correct `k8s.io` version or to solve conflicts. Mileage may hugely vary here. As a rule of thumb less is definitely better. Additional comments with explanation are greatly appreciated.
+
+* Update Go modules (repeat the previous and this step until success :))
+```bash
+$ ./hack/update-deps.sh
+```
+
+* The final look of updated `go.mod` replace directive 
+```go
+replace (
+	// Required by kn-plugin-func to use newer Docker version
+	github.com/openshift/source-to-image => github.com/boson-project/source-to-image v1.3.2
+
+	// Aligned k8s.io version with Knative release
+	k8s.io/api => k8s.io/api v0.21.4
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.21.4
+	k8s.io/apimachinery => k8s.io/apimachinery v0.21.4
+	k8s.io/client-go => k8s.io/client-go v0.21.4
+	k8s.io/code-generator => k8s.io/code-generator v0.21.4
+
+	// Inlined plugins
+	knative.dev/kn-plugin-event => github.com/openshift-knative/kn-plugin-event v0.27.1-0.20220412125940-01b7cf265a69
+	knative.dev/kn-plugin-func => github.com/openshift-knative/kn-plugin-func v1.1.3-0.20220413141425-a3b388f3a2d8
+)
+```
+
+* Create a new PR with added plugins
+
+
 ### Once the changes to release branch is finalized, and we are ready for QA, create tag and push:
 ```bash
 $ git tag openshift-v0.14.0
