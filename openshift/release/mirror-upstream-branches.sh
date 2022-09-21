@@ -5,10 +5,10 @@
 
 
 set -ex
-readonly TMPDIR=$(mktemp -d knativeEventingBranchingCheckXXXX -p /tmp/)
+readonly TMPDIR=$(mktemp -d knativeClientBranchingCheckXXXX -p /tmp/)
 
-git fetch upstream --tags
-git fetch openshift --tags
+#git fetch upstream --tags
+#git fetch openshift --tags
 
 # We need to seed this with a few releases that, otherwise, would make
 # the processing regex less clear with more anomalies
@@ -24,14 +24,18 @@ sort -o "$TMPDIR"/midstream_branches "$TMPDIR"/midstream_branches
 sort -o "$TMPDIR"/upstream_branches "$TMPDIR"/upstream_branches
 comm -32 "$TMPDIR"/upstream_branches "$TMPDIR"/midstream_branches > "$TMPDIR"/new_branches
 
-UPSTREAM_BRANCH=$(cat "$TMPDIR"/new_branches)
-if [ -z "$UPSTREAM_BRANCH" ]; then
+UPSTREAM_BRANCHES=$(cat "$TMPDIR"/new_branches | tr '\n' ' ')
+
+if [ -z "$UPSTREAM_BRANCHES" ]; then
     echo "no new branch, exiting"
     exit 0
 fi
-echo "found upstream branch: $UPSTREAM_BRANCH"
-readonly UPSTREAM_TAG="knative-v$UPSTREAM_BRANCH.0"
-readonly MIDSTREAM_BRANCH="release-v$UPSTREAM_BRANCH"
-openshift/release/create-release-branch.sh "$UPSTREAM_TAG" "$MIDSTREAM_BRANCH"
-# we would check the error code, but we 'set -e', so assume we're fine
-git push openshift "$MIDSTREAM_BRANCH"
+
+for UPSTREAM_BRANCH in ${UPSTREAM_BRANCHES[@]}; do
+  echo "found upstream branch: $UPSTREAM_BRANCH"
+  UPSTREAM_TAG="knative-v$UPSTREAM_BRANCH.0"
+  MIDSTREAM_BRANCH="release-v$UPSTREAM_BRANCH"
+  $(dirname "${BASH_SOURCE[0]}")/openshift/release/create-release-branch.sh "$UPSTREAM_TAG" "$MIDSTREAM_BRANCH"
+  # we would check the error code, but we 'set -e', so assume we're fine
+  git push openshift "$MIDSTREAM_BRANCH"
+done
