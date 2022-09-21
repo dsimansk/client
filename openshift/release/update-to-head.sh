@@ -20,6 +20,9 @@
 set -e
 REPO_NAME=$(basename $(git rev-parse --show-toplevel))
 
+# Check if there's an upstream release we need to mirror downstream
+openshift/release/mirror-upstream-branches.sh
+
 # Custom files
 custom_files=$(cat <<EOT | tr '\n' ' '
 openshift
