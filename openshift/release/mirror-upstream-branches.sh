@@ -7,8 +7,8 @@
 set -ex
 readonly TMPDIR=$(mktemp -d knativeClientBranchingCheckXXXX -p /tmp/)
 
-#git fetch upstream --tags
-#git fetch openshift --tags
+git fetch upstream --tags
+git fetch openshift --tags
 
 # We need to seed this with a few releases that, otherwise, would make
 # the processing regex less clear with more anomalies
