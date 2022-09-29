@@ -193,7 +193,7 @@ install_knative_eventing_branch() {
 
   create_knative_namespace eventing
 
-  oc apply -R -f openshift/release/artifacts
+  oc create -R -f openshift/release/artifacts
 
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
