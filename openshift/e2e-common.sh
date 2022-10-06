@@ -197,6 +197,7 @@ install_knative_eventing_branch() {
   oc apply -f openshift/release/artifacts/eventing-core.yaml
   oc apply -f openshift/release/artifacts/in-memory-channel.yaml
   oc apply -f openshift/release/artifacts/mt-channel-broker.yaml
+  oc create -f openshift/release/artifacts/eventing-post-install.yaml
   
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
