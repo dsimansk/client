@@ -192,9 +192,12 @@ install_knative_eventing_branch() {
   pushd /tmp/knative-eventing/
 
   create_knative_namespace eventing
-
-  oc replace --force -R -f openshift/release/artifacts
-
+  
+  oc apply -f openshift/release/artifacts/eventing-crds.yaml
+  oc apply -f openshift/release/artifacts/eventing-core.yaml
+  oc apply -f openshift/release/artifacts/in-memory-channel.yaml
+  oc apply -f openshift/release/artifacts/mt-channel-broker.yaml
+  
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
