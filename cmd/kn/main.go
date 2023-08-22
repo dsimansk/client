@@ -78,6 +78,11 @@ func run(args []string) error {
 	// reset the temporary setting
 	rootCmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: false} // wokeignore:rule=whitelist // TODO(#1031)
 
+	_, err = plugin.NewContextManager()
+	if err != nil {
+		return err
+	}
+
 	// Find plugin with the commands arguments
 	plugin, err := pluginManager.FindPlugin(commands)
 	if err != nil {

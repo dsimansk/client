@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
 	"sort"
 	"strconv"
 	"strings"
@@ -28,6 +29,7 @@ import (
 	"knative.dev/serving/pkg/apis/serving"
 
 	"knative.dev/client/pkg/kn/commands/revision"
+	"knative.dev/client/pkg/kn/plugin"
 	"knative.dev/client/pkg/printers"
 	clientservingv1 "knative.dev/client/pkg/serving/v1"
 
@@ -99,10 +101,16 @@ func NewServiceDescribeCommand(p *commands.KnParams) *cobra.Command {
 		Example:           describe_example,
 		ValidArgsFunction: commands.ResourceNameCompletionFunc(p),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var serviceName string
 			if len(args) != 1 {
-				return errors.New("'service describe' requires the service name given as single argument")
+				c, _ := plugin.NewContextManager()
+				serviceName = c.Find("service")
+				if serviceName == "" {
+					return errors.New("'service describe' requires the service name given as single argument")
+				}
+			} else {
+				serviceName = args[0]
 			}
-			serviceName := args[0]
 
 			namespace, err := p.GetNamespace(cmd)
 			if err != nil {
