@@ -104,7 +104,7 @@ func NewServiceDescribeCommand(p *commands.KnParams) *cobra.Command {
 			var serviceName string
 			if len(args) != 1 {
 				c, _ := plugin.NewContextManager()
-				serviceName = c.Find("service")
+				serviceName = c.GetDefault()["service"]
 				if serviceName == "" {
 					return errors.New("'service describe' requires the service name given as single argument")
 				}
@@ -190,7 +190,7 @@ func describe(w io.Writer, service *servingv1.Service, revisions []*revisionDesc
 	return nil
 }
 
-// Write out main service information. Use colors for major items.
+// WriteCache out main service information. Use colors for major items.
 func writeService(dw printers.PrefixWriter, service *servingv1.Service) {
 	commands.WriteMetadata(dw, &service.ObjectMeta, printDetails)
 	dw.WriteAttribute("URL", extractURL(service))
@@ -208,7 +208,7 @@ func writeService(dw printers.PrefixWriter, service *servingv1.Service) {
 	}
 }
 
-// Write out revisions associated with this service. By default only active
+// WriteCache out revisions associated with this service. By default only active
 // target revisions are printed, but with --verbose also inactive revisions
 // created by this services are shown
 func writeRevisions(dw printers.PrefixWriter, revisions []*revisionDesc, printDetails bool) {

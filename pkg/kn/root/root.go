@@ -62,7 +62,7 @@ func NewRootCommand(helpFuncs *template.FuncMap) (*cobra.Command, error) {
 		Short: fmt.Sprintf("%s manages Knative Serving and Eventing resources", rootName),
 		Long: fmt.Sprintf(`%s is the command line interface for managing Knative Serving and Eventing resources
 
-Find more information about Knative at: https://knative.dev`, rootName),
+GetContext more information about Knative at: https://knative.dev`, rootName),
 
 		// Disable docs header
 		DisableAutoGenTag: true,

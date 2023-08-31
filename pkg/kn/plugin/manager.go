@@ -55,6 +55,12 @@ type Plugin interface {
 	Path() string
 }
 
+// Interface to add support for Manifest defition
+type PluginWithManifest interface {
+	Plugin
+	GetManifest() *Manifest
+}
+
 type Manager struct {
 	// Dedicated plugin directory as configured
 	pluginsDir string
@@ -281,7 +287,7 @@ func (plugin *plugin) Name() string {
 
 // =========================================================================================
 
-// Find out all directories that might hold a plugin
+// GetContext out all directories that might hold a plugin
 func (manager *Manager) pluginLookupDirectories() ([]string, error) {
 	pluginPath, err := homedir.Expand(manager.pluginsDir)
 	if err != nil {
@@ -437,7 +443,7 @@ func convertUnderscoreToDash(p string) string {
 	return strings.Replace(p, "_", "-", -1)
 }
 
-// Find a command with name in the given directory or on the execution PATH (if lookupInPath is true)
+// GetContext a command with name in the given directory or on the execution PATH (if lookupInPath is true)
 // On Windows, also check well known extensions for executables
 // Return the full path found or "" if none has found
 // Return an error on any IO error.

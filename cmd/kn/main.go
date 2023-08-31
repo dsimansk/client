@@ -78,14 +78,30 @@ func run(args []string) error {
 	// reset the temporary setting
 	rootCmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: false} // wokeignore:rule=whitelist // TODO(#1031)
 
-	_, err = plugin.NewContextManager()
+	ctxManager, err := plugin.NewContextManager()
 	if err != nil {
 		return err
 	}
+	//defer func(ctxManager *plugin.ContextDataManager) {
+	//	err := ctxManager.WriteCache()
+	//	if err != nil {
+	//		println("error during write")
+	//	}
+	//}(ctxManager)
 
 	// Find plugin with the commands arguments
 	plugin, err := pluginManager.FindPlugin(commands)
 	if err != nil {
+		return err
+	}
+
+	// FT: Context Sharing
+	err = ctxManager.FetchManifests(pluginManager)
+	if err != nil {
+		return err
+	}
+	//TODO: remove once implemented
+	if err := ctxManager.WriteCache(); err != nil {
 		return err
 	}
 

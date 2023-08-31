@@ -152,7 +152,7 @@ func WriteConcurrencyOptions(dw printers.PrefixWriter, revision *servingv1.Revis
 
 }
 
-// Write the image attribute (with
+// WriteCache the image attribute (with
 func WriteImage(dw printers.PrefixWriter, revision *servingv1.Revision) {
 	c := clientserving.ContainerOfRevisionSpec(&revision.Spec)
 	if c == nil {
@@ -239,7 +239,7 @@ func WriteResources(dw printers.PrefixWriter, r *servingv1.Revision) {
 	writeResourcesHelper(dw, "CPU", requests.Cpu(), limits.Cpu())
 }
 
-// Write request ... limits or only one of them
+// WriteCache request ... limits or only one of them
 func writeResourcesHelper(dw printers.PrefixWriter, label string, request *resource.Quantity, limit *resource.Quantity) {
 	value := ""
 	if !request.IsZero() && !limit.IsZero() {
