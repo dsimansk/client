@@ -50,7 +50,7 @@ func keyIsBoring(k string) bool {
 	return len(parts) > 1 && boringDomains[parts[0]]
 }
 
-// WriteCache a map either compact in a single line (possibly truncated) or, if printDetails is set,
+// Write a map either compact in a single line (possibly truncated) or, if printDetails is set,
 // over multiple line, one line per key-value pair. The output is sorted by keys.
 func WriteMapDesc(dw printers.PrefixWriter, m map[string]string, label string, details bool) {
 	if len(m) == 0 {
