@@ -59,6 +59,8 @@ type Plugin interface {
 type PluginWithManifest interface {
 	Plugin
 	GetManifest() *Manifest
+
+	GetContextData(key string) string
 }
 
 type Manager struct {

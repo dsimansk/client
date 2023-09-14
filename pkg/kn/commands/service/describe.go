@@ -103,6 +103,7 @@ func NewServiceDescribeCommand(p *commands.KnParams) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var serviceName string
 			if len(args) != 1 {
+
 				c, _ := plugin.NewContextManager()
 				serviceName = c.GetDefault()["service"]
 				if serviceName == "" {

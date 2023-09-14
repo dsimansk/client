@@ -17,9 +17,12 @@ package plugin
 import (
 	"bytes"
 	"encoding/json"
+	"io/fs"
 	"os"
 	"os/exec"
-	"strings"
+	"path/filepath"
+
+	"knative.dev/client/pkg/kn/config"
 )
 
 //--TYPES--
@@ -37,6 +40,7 @@ type Manifest struct {
 	// ProducesContextDataKeys is a list of keys for the ContextData that
 	// a plugin can produce. Nil or an empty list declares that this
 	// plugin is not ContextDataProducer
+	//TODO: well-known keys could be const, or this can be its own data structure
 	ProducesContextDataKeys []string `json:"producesKeys,omitempty"`
 
 	// ConsumesContextDataKeys is a list of keys from a ContextData that a
@@ -57,43 +61,34 @@ var ctxManager *ContextDataManager
 
 type ContextDataManager struct {
 	ContextData map[string]ContextData `json:"contextData"`
-	Manifests   map[string]Manifest    `json:"manifests"`
+	Producers   map[string][]string
+	Consumers   map[string][]string
+	Manifests   map[string]Manifest `json:"manifests"`
 }
 
 func NewContextManager() (*ContextDataManager, error) {
 	if ctxManager == nil {
-		var err error
-		//file, err := os.Open("~/.config/kn/context.json")
+		//println("opening file...")
+		//file, err := os.Open(filepath.Join(filepath.Dir(config.GlobalConfig.ConfigFile()), "context.json"))
 		//if err != nil {
 		//	return nil, err
 		//}
-		//TODO: mock data to test things out
-		mockData := `
-{
-	"contextData": {
-		"default": {
-			"service": "hello",
-			"namespace": "default"
+		//decoder := json.NewDecoder(file)
+		//ctxManager = &ContextDataManager{}
+		//if err := decoder.Decode(ctxManager); err != nil {
+		//	return nil, err
+		//}
+		//out := new(bytes.Buffer)
+		//enc := json.NewEncoder(out)
+		//enc.SetIndent("", "    ")
+		//enc.Encode(ctxManager)
+		//println(out.String())
+		ctxManager = &ContextDataManager{
+			ContextData: map[string]ContextData{},
+			Producers:   map[string][]string{},
+			Consumers:   map[string][]string{},
+			Manifests:   map[string]Manifest{},
 		}
-	},
-	"manifests": {
-		"kn-service-log": {
-			"path": "/usr/local/bin/kn-service/log",
-			"hasManifest": true,
-			"description": "Show logs of a service",
-			"consumesKeys": ["service", "namespace"]
-		}
-	}
-}
-`
-		mockReader := strings.NewReader(mockData)
-		decoder := json.NewDecoder(mockReader)
-		contextData := &ContextDataManager{}
-		err = decoder.Decode(&contextData)
-		if err != nil {
-			return nil, err
-		}
-		ctxManager = contextData
 	}
 	return ctxManager, nil
 }
@@ -124,32 +119,50 @@ func (c *ContextDataManager) FetchManifests(pluginManager *Manager) error {
 	if err != nil {
 		return err
 	}
-	for _, p := range plugins {
+	for _, plugin := range plugins {
 		// Add new plugins only
-		if _, exists := c.Manifests[p.Name()]; !exists {
-			manifest := &Manifest{}
-			if p.Path() != "" {
+		if _, exists := c.Manifests[plugin.Name()]; !exists {
+			var manifest *Manifest
+			if plugin.Path() != "" {
 				// Fetch from external plugin
-				if m := fetchExternalManifest(p); m != nil {
+				if m := fetchExternalManifest(plugin); m != nil {
 					manifest = m
 				}
 			} else {
 				// Fetch from internal plugin
-				if pwm, ok := p.(PluginWithManifest); ok {
+				if pwm, ok := plugin.(PluginWithManifest); ok {
 					manifest = pwm.GetManifest()
 				}
 			}
+			if manifest == nil {
+				return nil
+			}
 			// Add manifest to map
-			c.Manifests[p.Name()] = *manifest
+			c.Manifests[plugin.Name()] = *manifest
+			// Build producers mapping
+			for _, key := range manifest.ProducesContextDataKeys {
+				c.Producers[key] = append(c.Producers[key], plugin.Name())
+			}
+			// Build consumers mapping
+			for _, key := range manifest.ConsumesContextDataKeys {
+				c.Consumers[key] = append(c.Consumers[key], plugin.Name())
+			}
 		}
 	}
+	out := new(bytes.Buffer)
+	enc := json.NewEncoder(out)
+	enc.SetIndent("", "    ")
+	if err := enc.Encode(c.Manifests); err != nil {
+		return nil
+	}
+	println(out.String())
 	return nil
 }
 
 // TODO: We should cautiously execute external binaries
 // fetchExternalManifest returns Manifest from external plugin by exec `$plugin manifest get`
 func fetchExternalManifest(p Plugin) *Manifest {
-	cmd := exec.Command(p.Path(), "manifest", "get") //nolint:gosec
+	cmd := exec.Command(p.Path(), "manifest") //nolint:gosec
 	stdOut := new(bytes.Buffer)
 	cmd.Stdout = stdOut
 	manifest := &Manifest{
@@ -175,7 +188,12 @@ func fetchExternalManifest(p Plugin) *Manifest {
 // WriteCache store data back to cache file
 func (c *ContextDataManager) WriteCache() error {
 	println("\n====\nContext Data to be stored:")
-	enc := json.NewEncoder(os.Stdout)
+	out := new(bytes.Buffer)
+	enc := json.NewEncoder(out)
 	enc.SetIndent("", "    ")
-	return enc.Encode(c)
+	if err := enc.Encode(c); err != nil {
+		return nil
+	}
+	println(out.String())
+	return os.WriteFile(filepath.Join(filepath.Dir(config.GlobalConfig.ConfigFile()), "context.json"), out.Bytes(), fs.FileMode(0664))
 }

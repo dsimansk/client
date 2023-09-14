@@ -82,12 +82,12 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
-	//defer func(ctxManager *plugin.ContextDataManager) {
-	//	err := ctxManager.WriteCache()
-	//	if err != nil {
-	//		println("error during write")
-	//	}
-	//}(ctxManager)
+
+	defer func(ctxManager *plugin.ContextDataManager) {
+		if err := ctxManager.WriteCache(); err != nil {
+			println("error during write")
+		}
+	}(ctxManager)
 
 	// Find plugin with the commands arguments
 	plugin, err := pluginManager.FindPlugin(commands)
@@ -98,10 +98,6 @@ func run(args []string) error {
 	// FT: Context Sharing
 	err = ctxManager.FetchManifests(pluginManager)
 	if err != nil {
-		return err
-	}
-	//TODO: remove once implemented
-	if err := ctxManager.WriteCache(); err != nil {
 		return err
 	}
 
